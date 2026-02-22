@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ShoppingList, Ingredient, SHOPPING_CATEGORIES } from './types';
 import { format, addDays, startOfWeek, addWeeks } from 'date-fns';
-import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, Info, HelpCircle } from 'lucide-react';
+import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, Info, HelpCircle, Sun, Moon } from 'lucide-react';
 import InfoModal from './components/InfoModal';
 
 
@@ -18,6 +18,7 @@ export default function Home() {
   const [memo, setMemo] = useState<string>('');
   const [isFeaturesModalOpen, setIsFeaturesModalOpen] = useState(false);
   const [isAccuracyModalOpen, setIsAccuracyModalOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
 
   const weekStartDateStr = format(selectedDate, 'yyyyMMdd');
@@ -65,6 +66,29 @@ export default function Home() {
   useEffect(() => {
     fetchSavedList(weekStartDateStr);
   }, [weekStartDateStr, fetchSavedList]);
+
+  // テーマの初期化と反映
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.body.classList.add('dark');
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.body.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   const changeWeek = (offset: number) => {
     setSelectedDate(prev => addWeeks(prev, offset));
@@ -260,7 +284,22 @@ export default function Home() {
   const weekLabel = `${format(selectedDate, 'M/d')} ~ ${format(addDays(selectedDate, 4), 'M/d')}`;
 
   return (
-    <main className="container-custom">
+    <main className="container-custom relative">
+      {/* Theme Toggle Button */}
+      <div className="absolute top-4 right-4 z-10">
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-full glass-panel hover:bg-pink-50 dark:hover:bg-gray-700 transition-colors shadow-sm border border-pink-100 dark:border-gray-600"
+          title={isDarkMode ? 'ライトモードに切り替え' : 'ダークモードに切り替え'}
+        >
+          {isDarkMode ? (
+            <Sun className="w-5 h-5 text-yellow-500" />
+          ) : (
+            <Moon className="w-5 h-5 text-pink-400" />
+          )}
+        </button>
+      </div>
+
       {/* Header */}
       <header className="text-center mb-6 md:mb-8">
         <h1 className="text-2xl md:text-4xl font-bold gradient-text mb-2 flex items-center justify-center gap-2 md:gap-3">

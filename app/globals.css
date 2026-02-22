@@ -10,6 +10,22 @@
   --text-main: #333333;
   --text-muted: #666666;
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: #ffe4e6;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --body-overlay: rgba(255, 255, 255, 0.65);
+}
+
+body.dark {
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --glass-bg: rgba(31, 41, 55, 0.85);
+  /* deep slate */
+  --glass-border: rgba(244, 114, 182, 0.2);
+  /* faint pink */
+  --card-bg: rgba(17, 24, 39, 0.9);
+  --body-overlay: rgba(15, 23, 42, 0.8);
+  /* darker navy overlay */
 }
 
 * {
@@ -41,8 +57,8 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.65);
-  /* 白の透過オーバーレイ */
+  background: var(--body-overlay);
+  /* 透過オーバーレイ */
   backdrop-filter: blur(3px);
   /* わずかにぼかす */
   -webkit-backdrop-filter: blur(3px);
@@ -80,13 +96,13 @@ button {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   margin-bottom: 1rem;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 1);
+  border: 1px solid var(--glass-border);
 }
 
 .card:hover {
@@ -184,11 +200,11 @@ button {
 /* プレミアム感を出すための装飾 */
 /* プレミアム感を出すための装飾 */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--glass-bg);
   /* 背景を濃くして文字を見やすく */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid #ffe4e6;
+  border: 1px solid var(--glass-border);
   /* 薄いピンクのボーダーで境界を明確に */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   /* シャドウで浮き上がらせる */
@@ -276,13 +292,25 @@ button {
 
 /* アニメーション */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-fade-in {
