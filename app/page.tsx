@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ShoppingList, Ingredient, SHOPPING_CATEGORIES } from './types';
 import { format, addDays, startOfWeek, addWeeks } from 'date-fns';
-import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, Info, HelpCircle } from 'lucide-react';
+import InfoModal from './components/InfoModal';
+
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState<Date>(startOfWeek(new Date(), { weekStartsOn: 1 }));
@@ -13,6 +15,9 @@ export default function Home() {
   // チェック状態はDB固有のIDまたは材料名で管理（DB保存後はIDを優先）
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [activeDates, setActiveDates] = useState<Set<string>>(new Set());
+  const [isFeaturesModalOpen, setIsFeaturesModalOpen] = useState(false);
+  const [isAccuracyModalOpen, setIsAccuracyModalOpen] = useState(false);
+
 
   const weekStartDateStr = format(selectedDate, 'yyyyMMdd');
 
@@ -240,7 +245,25 @@ export default function Home() {
           AI Shopping List
         </h1>
         <p className="text-sm md:text-base text-gray-500 font-medium px-4">レタスクラブの献立から、あなたのための買い物リストを提案します</p>
+
+        <div className="flex items-center justify-center gap-4 mt-4 text-sm">
+          <button
+            onClick={() => setIsFeaturesModalOpen(true)}
+            className="flex items-center gap-1.5 text-pink-500 hover:text-pink-600 transition-colors font-medium border-b border-pink-200 hover:border-pink-500 pb-0.5"
+          >
+            <Info className="w-4 h-4" />
+            アプリの特徴
+          </button>
+          <button
+            onClick={() => setIsAccuracyModalOpen(true)}
+            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-600 transition-colors font-medium border-b border-gray-200 hover:border-gray-500 pb-0.5"
+          >
+            <HelpCircle className="w-4 h-4" />
+            集計の正確性について
+          </button>
+        </div>
       </header>
+
 
       {/* Control Panel */}
       <div className="glass-panel p-4 md:p-6 mb-6 md:mb-8 text-center animate-fade-in shadow-xl mx-auto max-w-2xl md:max-w-none">
@@ -438,6 +461,114 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Info Modals */}
+      <InfoModal
+        isOpen={isFeaturesModalOpen}
+        onClose={() => setIsFeaturesModalOpen(false)}
+        title="アプリの特徴"
+      >
+        <div className="space-y-6">
+          <p>
+            買い物リストの集計を正しく、かつ実用的に行うために、このアプリでは<strong className="text-pink-500">「LLM（Gemini API）によるセマンティック（意味論的）な集計」</strong>という設計を採用しています。
+          </p>
+          <p>
+            単純な文字列一致による集計では、「鶏肉」と「鶏もも肉」を別物として扱ってしまったり、「大さじ1」と「小さじ3」を合算できなかったりしますが、以下の設計ポイントによってそれらを解決しています。
+          </p>
+
+          <section>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">1. プロンプトによる「意味の正規化」</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>表記ゆれの統一</strong>: 「鶏もも肉」と「とり肉」といった揺れを、AIが文脈から判断して標準的な名称に統一します。</li>
+              <li><strong>単位を考慮した演算</strong>: 「1/2個」+「1.5個」=「2個」といった計算をAIに実行させています。また、単位が不明なものは「1本」「1パック」などの適切なデフォルト値を補完するよう指示しています。</li>
+              <li><strong>合わせ調味料の分解</strong>: 「合わせ調味料（醤油、酒）」とあった場合、それをそのままリストに入れるのではなく、「醤油」「酒」という基本調味料に分解して集計します。</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">2. カテゴリ分けによる実用性の向上</h3>
+            <p>
+              スーパーの売り場に合わせた分類: 「野菜・きのこ」「肉・ハム・ベーコン」など、実際の買い物動線を意識したカテゴリをAIに提示し、必ずその中から選ばせることで、リストが整理された状態で表示されます。
+            </p>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">3. 多重のフォールバックによる堅牢性</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>マルチモデル・フォールバック</strong>: 最新のGeminiモデルが失敗した場合、安定版モデルを順次試行します。</li>
+              <li><strong>最終フォールバック</strong>: AIによるパースが完全に失敗した場合は、最小限の整形のみを行った生テキストを表示します。</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">4. トレーサビリティ（追跡可能性）</h3>
+            <p>
+              「この食材、何を作るために買うんだっけ？」という疑問に応えるため、各食材に <strong>usedDays</strong>（月〜日のどの曜日の献立で使われるか）を紐持たせています。
+            </p>
+          </section>
+
+          <p className="pt-4 border-t border-gray-100 text-sm font-medium">
+            このように、「人間が買い物中に頭の中で行っている判断（似たものの統合、単位の計算、売り場ごとの整理）」をプロンプトを通じてAIに委譲しているのが、このアプリの集計設計の特徴です。
+          </p>
+        </div>
+      </InfoModal>
+
+      <InfoModal
+        isOpen={isAccuracyModalOpen}
+        onClose={() => setIsAccuracyModalOpen(false)}
+        title="集計の正確性について"
+      >
+        <div className="space-y-6">
+          <p className="p-4 bg-amber-50 rounded-xl border border-amber-100 text-amber-800 text-sm">
+            現在の設計（AIによる解析）では、「解析用生データには載っているのに、買い物リストには出てこない」ということは起こりえます。
+          </p>
+
+          <section>
+            <h3 className="text-lg font-bold text-gray-800 mb-3">主な原因</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-bold flex items-center gap-2">
+                  <span className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center text-xs">1</span>
+                  AIによる意図的な除外
+                </h4>
+                <p className="pl-7 text-sm">
+                  「合わせ調味料」の分解や、水・塩などの「家にあることが自明なもの」をAIの判断で省略するケースがあります。
+                </p>
+              </div>
+              <div>
+                <h4 className="font-bold flex items-center gap-2">
+                  <span className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center text-xs">2</span>
+                  AIの「ハルシネーション（幻覚）」や「無視」
+                </h4>
+                <p className="pl-7 text-sm">
+                  材料リストが非常に長い場合、中盤や終盤の材料の集計が漏れる可能性が技術的に排除できません。
+                </p>
+              </div>
+              <div>
+                <h4 className="font-bold flex items-center gap-2">
+                  <span className="w-5 h-5 bg-gray-100 rounded-full flex items-center justify-center text-xs">3</span>
+                  スクレイピング段階での失敗
+                </h4>
+                <p className="pl-7 text-sm">
+                  Webサイトの構造変化により、生データの抽出そのものに失敗している場合があります。
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+            <h3 className="font-bold mb-2">対策について</h3>
+            <p className="text-sm">
+              この「漏れ」のリスクがあるため、画面下部の<strong>「解析用生データを表示」</strong>から生データを確認できるようにしています。
+            </p>
+          </section>
+
+          <p className="text-sm text-gray-500">
+            現在の設計は「利便性と手軽さ」を優先し、人間が考える手間をAIで最小化することに重きを置いた構成になっています。
+          </p>
+        </div>
+      </InfoModal>
     </main>
   );
 }
+
