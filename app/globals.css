@@ -17,8 +17,9 @@
 }
 
 body.dark {
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
+  --text-main: #ffffff;
+  --text-muted: #d1d5db;
+  /* gray-300 */
   --glass-bg: rgba(31, 41, 55, 0.85);
   /* deep slate */
   --glass-border: rgba(244, 114, 182, 0.2);
