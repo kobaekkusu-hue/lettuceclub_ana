@@ -30,6 +30,7 @@ export async function GET(request: Request) {
             data: {
                 recipes: JSON.parse(list.recipesData),
                 activeDates: JSON.parse(list.activeDates),
+                memo: list.memo,
                 ingredients: list.ingredients.map((ing: any) => ({
                     id: ing.id,
                     name: ing.name,
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
                 weekStartDate,
                 recipesData: JSON.stringify(recipesData),
                 activeDates: JSON.stringify(activeDates),
+                memo: body.memo, // リクエストに含まれていれば更新
                 ingredients: {
                     create: ingredients.map((ing: Ingredient) => ({
                         name: ing.name,

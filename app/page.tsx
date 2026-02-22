@@ -15,6 +15,7 @@ export default function Home() {
   // チェック状態はDB固有のIDまたは材料名で管理（DB保存後はIDを優先）
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set());
   const [activeDates, setActiveDates] = useState<Set<string>>(new Set());
+  const [memo, setMemo] = useState<string>('');
   const [isFeaturesModalOpen, setIsFeaturesModalOpen] = useState(false);
   const [isAccuracyModalOpen, setIsAccuracyModalOpen] = useState(false);
 
@@ -35,6 +36,8 @@ export default function Home() {
           ingredients: data.data.ingredients
         });
         setActiveDates(new Set(data.data.activeDates));
+        setMemo(data.data.memo || '');
+
 
         // チェック状態の復元
         const newChecked = new Set<string>();
@@ -65,7 +68,27 @@ export default function Home() {
 
   const changeWeek = (offset: number) => {
     setSelectedDate(prev => addWeeks(prev, offset));
+    setMemo(''); // 週を切り替えたら一旦クリア（fetchで取得されるまで）
   };
+
+  // メモの自動保存ロジック (Debounce)
+  useEffect(() => {
+    if (!result && memo === '') return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await fetch('/api/list/memo', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ weekStartDate: weekStartDateStr, memo }),
+        });
+      } catch (err) {
+        console.error('Failed to auto-save memo:', err);
+      }
+    }, 1000); // 1秒入力が止まったら保存
+
+    return () => clearTimeout(timer);
+  }, [memo, weekStartDateStr, result]);
 
   // 生成したリストをDBに保存する共通関数
   const saveToDb = async (listData: ShoppingList, active: Set<string>) => {
@@ -289,6 +312,26 @@ export default function Home() {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShoppingBag className="w-5 h-5" />}
             {loading ? 'AIが考え中...' : 'リストを作成'}
           </button>
+        </div>
+
+        {/* Weekly Memo Section */}
+        <div className="mt-6 max-w-xl mx-auto">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-pink-200 to-rose-200 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
+            <div className="relative glass-panel p-4 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-pink-500 font-bold text-sm border-b border-pink-50 pb-2">
+                <span className="text-lg">📝</span>
+                <span>お買い物メモ（週ごとの備忘録）</span>
+                <span className="ml-auto text-[10px] font-normal text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">自動保存中</span>
+              </div>
+              <textarea
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+                placeholder="ここに「卵を買い足す」「パンも買う」などのメモを残せます..."
+                className="w-full bg-transparent border-none focus:ring-0 text-gray-700 text-sm md:text-base resize-none min-h-[80px] custom-scrollbar placeholder:text-gray-300 placeholder:italic"
+              />
+            </div>
+          </div>
         </div>
 
         {error && (

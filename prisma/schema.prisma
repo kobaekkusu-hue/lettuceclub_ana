@@ -11,6 +11,7 @@ model ShoppingList {
   weekStartDate String           @unique
   recipesData   String
   activeDates   String
+  memo          String?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   ingredients   IngredientItem[]
