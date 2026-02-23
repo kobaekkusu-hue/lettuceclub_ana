@@ -10,7 +10,7 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
   }
 
   // 試行するモデルの優先順位
-  const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+  const MODELS = ['gemini-3-flash-preview', 'gemini-2.5-flash'];
 
   const prompt = `
   複数のレシピの材料リストを解析し、買い物リストとして集計してください。
