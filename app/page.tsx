@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ShoppingList, Ingredient, SHOPPING_CATEGORIES } from './types';
 import { format, addDays, startOfWeek, addWeeks } from 'date-fns';
-import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, Info, HelpCircle, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, Info, HelpCircle, Sun, Moon, ChevronDown, ChevronUp } from 'lucide-react';
 import InfoModal from './components/InfoModal';
 
 
@@ -19,6 +19,7 @@ export default function Home() {
   const [isFeaturesModalOpen, setIsFeaturesModalOpen] = useState(false);
   const [isAccuracyModalOpen, setIsAccuracyModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
 
 
   const weekStartDateStr = format(selectedDate, 'yyyyMMdd');
@@ -270,6 +271,17 @@ export default function Home() {
     }
   };
 
+
+  const toggleCategory = (category: string) => {
+    const newCollapsed = new Set(collapsedCategories);
+    if (newCollapsed.has(category)) {
+      newCollapsed.delete(category);
+    } else {
+      newCollapsed.add(category);
+    }
+    setCollapsedCategories(newCollapsed);
+  };
+
   // カテゴリごとのグループ化
   const groupIngredients = (ingredients: Ingredient[]) => {
     return ingredients.reduce((acc, curr) => {
@@ -464,61 +476,74 @@ export default function Home() {
               {SHOPPING_CATEGORIES.map((category) => {
                 const items = groupIngredients(result.ingredients)[category] || [];
                 const hasItems = items.length > 0;
+                const isCollapsed = collapsedCategories.has(category);
 
                 return (
-                  <div key={category} className={`glass-panel p-5 ${!hasItems ? 'opacity-60' : ''}`}>
-                    <h3 className="text-lg font-bold text-gray-600 dark:text-gray-300 mb-3 border-b border-gray-100 dark:border-gray-800 pb-2 flex justify-between items-center">
-                      {category}
-                      {!hasItems && <span className="text-xs font-normal text-gray-400 dark:text-gray-500">無し</span>}
-                    </h3>
-
-                    {hasItems ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {items.map((item, idx) => {
-                          const key = item.id || `${category}-${item.name}-${idx}`;
-                          const isChecked = checkedItems.has(key);
-                          return (
-                            <div
-                              key={key}
-                              className={`flex items-start gap-3 p-2 rounded-lg transition-all cursor-pointer ${isChecked ? 'bg-gray-50 opacity-50' : 'hover:bg-white/50'}`}
-                              onClick={() => toggleItem(item)}
-                            >
-                              <label className="flex items-start gap-3 w-full cursor-pointer group">
-                                <div className="relative pt-1 flex-shrink-0">
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={() => toggleItem(item)}
-                                    className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-pink-500 checked:border-pink-500 transition-colors"
-                                  />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex justify-between items-baseline mb-1">
-                                    <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-pink-600 transition-colors'}`}>
-                                      {item.name}
-                                    </span>
-                                    <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-pink-500 dark:text-pink-400 font-bold'}`}>
-                                      {item.amount}
-                                    </span>
-                                  </div>
-
-                                  {/* 使用曜日のバッジ表示 */}
-                                  {item.usedDays && item.usedDays.length > 0 && (
-                                    <div className={`flex flex-wrap gap-1 mt-0.5 ${isChecked ? 'opacity-50' : ''}`}>
-                                      {item.usedDays.map(day => (
-                                        <span key={day} className={`day-badge day-badge-${day} shadow-sm`}>{day}</span>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </label>
-                            </div>
-                          );
-                        })}
+                  <div key={category} className={`glass-panel p-0 overflow-hidden transition-all ${!hasItems ? 'opacity-60' : ''}`}>
+                    <button
+                      onClick={() => toggleCategory(category)}
+                      className="w-full px-5 py-4 flex justify-between items-center bg-transparent hover:bg-white/30 dark:hover:bg-gray-800/30 transition-colors"
+                    >
+                      <h3 className="text-lg font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                        {category}
+                        {!hasItems && <span className="text-xs font-normal text-gray-400 dark:text-gray-500">無し</span>}
+                      </h3>
+                      <div className="text-gray-400">
+                        {isCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
                       </div>
-                    ) : (
-                      <div className="text-sm text-gray-400 dark:text-gray-500 py-2 pl-2">
-                        必要な材料はありません
+                    </button>
+
+                    {!isCollapsed && (
+                      <div className="px-5 pb-5 animate-fade-in">
+                        {hasItems ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-gray-100 dark:border-gray-800">
+                            {items.map((item, idx) => {
+                              const key = item.id || `${category}-${item.name}-${idx}`;
+                              const isChecked = checkedItems.has(key);
+                              return (
+                                <div
+                                  key={key}
+                                  className={`flex items-start gap-3 p-2 rounded-lg transition-all cursor-pointer ${isChecked ? 'bg-gray-50 opacity-50' : 'hover:bg-white/50'}`}
+                                  onClick={() => toggleItem(item)}
+                                >
+                                  <label className="flex items-start gap-3 w-full cursor-pointer group">
+                                    <div className="relative pt-1 flex-shrink-0">
+                                      <input
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        onChange={() => toggleItem(item)}
+                                        className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-pink-500 checked:border-pink-500 transition-colors"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex justify-between items-baseline mb-1">
+                                        <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-pink-600 transition-colors'}`}>
+                                          {item.name}
+                                        </span>
+                                        <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-pink-500 dark:text-pink-400 font-bold'}`}>
+                                          {item.amount}
+                                        </span>
+                                      </div>
+
+                                      {/* 使用曜日のバッジ表示 */}
+                                      {item.usedDays && item.usedDays.length > 0 && (
+                                        <div className={`flex flex-wrap gap-1 mt-0.5 ${isChecked ? 'opacity-50' : ''}`}>
+                                          {item.usedDays.map(day => (
+                                            <span key={day} className={`day-badge day-badge-${day} shadow-sm`}>{day}</span>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-400 dark:text-gray-500 py-2 pl-2 border-t border-gray-100 dark:border-gray-800">
+                            必要な材料はありません
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
