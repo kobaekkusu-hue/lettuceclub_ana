@@ -20,6 +20,7 @@ export default function Home() {
   const [isAccuracyModalOpen, setIsAccuracyModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
+  const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 
 
   const weekStartDateStr = format(selectedDate, 'yyyyMMdd');
@@ -518,18 +519,23 @@ export default function Home() {
                                 <div
                                   key={key}
                                   className={`flex items-start gap-3 p-2 rounded-lg transition-all cursor-pointer ${isChecked ? 'bg-gray-50 opacity-50' : 'hover:bg-white/50'}`}
-                                  onClick={() => toggleItem(item)}
                                 >
-                                  <label className="flex items-start gap-3 w-full cursor-pointer group">
-                                    <div className="relative pt-1 flex-shrink-0">
+                                  <div className="flex items-start gap-3 w-full group">
+                                    <div className="relative pt-1 flex-shrink-0 z-10">
                                       <input
                                         type="checkbox"
                                         checked={isChecked}
-                                        onChange={() => toggleItem(item)}
+                                        onChange={(e) => {
+                                          e.stopPropagation();
+                                          toggleItem(item);
+                                        }}
                                         className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-pink-500 checked:border-pink-500 transition-colors"
                                       />
                                     </div>
-                                    <div className="flex-1 min-w-0">
+                                    <div
+                                      className="flex-1 min-w-0"
+                                      onClick={() => setSelectedIngredient(item)}
+                                    >
                                       <div className="flex justify-between items-baseline mb-1">
                                         <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-pink-600 transition-colors'}`}>
                                           {item.name}
@@ -548,7 +554,7 @@ export default function Home() {
                                         </div>
                                       )}
                                     </div>
-                                  </label>
+                                  </div>
                                 </div>
                               );
                             })}
@@ -688,6 +694,88 @@ export default function Home() {
             現在の設計は「利便性と手軽さ」を優先し、人間が考える手間をAIで最小化することに重きを置いた構成になっています。
           </p>
         </div>
+      </InfoModal>
+
+      {/* 食材詳細モーダル */}
+      <InfoModal
+        isOpen={!!selectedIngredient}
+        onClose={() => setSelectedIngredient(null)}
+        title="この食材を使う献立"
+      >
+        {selectedIngredient && result && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center border-b dark:border-gray-800 pb-4">
+              <h3 className="text-xl font-bold text-pink-600 dark:text-pink-400">
+                {selectedIngredient.name}
+              </h3>
+              <span className="bg-pink-50 dark:bg-pink-900/30 text-pink-500 dark:text-pink-300 px-3 py-1 rounded-full font-bold">
+                {selectedIngredient.amount}
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                <span>🗓️</span> 以下の曜日のメニューで使用します：
+              </p>
+
+              <div className="grid gap-4">
+                {result.recipes
+                  .filter(menu => selectedIngredient.usedDays.includes(menu.dayOfWeek))
+                  .map((menu, idx) => (
+                    <div key={idx} className="glass-panel p-4 dark:bg-gray-800/50 border border-pink-50 dark:border-pink-900/20">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className={`day-badge day-badge-${menu.dayOfWeek} text-base px-3 py-1`}>
+                          {menu.dayOfWeek}曜日
+                        </span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">{menu.date}</span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {menu.dishes.map((dish, dIdx) => (
+                          <div key={dIdx} className="flex gap-4 items-start">
+                            {dish.imageUrl && (
+                              <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
+                                <img
+                                  src={dish.imageUrl.startsWith('/') ? `https://www.lettuceclub.net${dish.imageUrl}` : dish.imageUrl}
+                                  alt={dish.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )}
+                            <div className="flex-1">
+                              <span className={dish.type === 'main' ? 'tag-main mb-1' : 'tag-side mb-1'}>
+                                {dish.type === 'main' ? '主菜' : '副菜'}
+                              </span>
+                              <h4 className="font-bold text-gray-700 dark:text-gray-200 leading-tight">
+                                {dish.title}
+                              </h4>
+                              {dish.url && (
+                                <a
+                                  href={dish.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-pink-500 hover:text-pink-600 dark:text-pink-400 mt-1 inline-block border-b border-pink-100 hover:border-pink-500"
+                                >
+                                  レシピを見る →
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setSelectedIngredient(null)}
+              className="w-full py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              閉じる
+            </button>
+          </div>
+        )}
       </InfoModal>
     </main>
   );
