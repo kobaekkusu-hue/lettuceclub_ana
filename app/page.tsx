@@ -285,6 +285,7 @@ export default function Home() {
 
   // カテゴリごとのグループ化
   const groupIngredients = (ingredients: Ingredient[]) => {
+    if (!ingredients) return {} as Record<string, Ingredient[]>;
     return ingredients.reduce((acc, curr) => {
       const category = curr.category || 'その他';
       if (!acc[category]) acc[category] = [];

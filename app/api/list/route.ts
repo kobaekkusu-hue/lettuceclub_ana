@@ -37,6 +37,7 @@ export async function GET(request: Request) {
                     amount: ing.amount,
                     category: ing.category,
                     usedDays: JSON.parse(ing.usedDays),
+                    usedIn: ing.usedIn ? JSON.parse(ing.usedIn) : undefined,
                     isChecked: ing.isChecked
                 }))
             }
@@ -75,6 +76,7 @@ export async function POST(request: Request) {
                         amount: ing.amount,
                         category: ing.category,
                         usedDays: JSON.stringify(ing.usedDays || []),
+                        usedIn: ing.usedIn ? JSON.stringify(ing.usedIn) : null,
                         isChecked: false
                     }))
                 }
@@ -91,6 +93,7 @@ export async function POST(request: Request) {
             amount: ing.amount,
             category: ing.category,
             usedDays: JSON.parse(ing.usedDays),
+            usedIn: ing.usedIn ? JSON.parse(ing.usedIn) : undefined,
             isChecked: ing.isChecked
         }));
 
