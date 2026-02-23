@@ -58,32 +58,35 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // 同一週のデータが既に存在する場合は、一旦削除して作り直す（チェック状態もリセットされる）
-        // ※「再集計」の場合も上書き更新とする
-        await prisma.shoppingList.deleteMany({
-            where: { weekStartDate }
-        });
+        // トランザクションを使用して、削除と作成をアトミックに実行する
+        const newList = await prisma.$transaction(async (tx) => {
+            // 同一週のデータが既に存在する場合は削除
+            await tx.shoppingList.deleteMany({
+                where: { weekStartDate }
+            });
 
-        const newList = await prisma.shoppingList.create({
-            data: {
-                weekStartDate,
-                recipesData: JSON.stringify(recipesData),
-                activeDates: JSON.stringify(activeDates),
-                memo: body.memo, // リクエストに含まれていれば更新
-                ingredients: {
-                    create: ingredients.map((ing: Ingredient) => ({
-                        name: ing.name,
-                        amount: ing.amount,
-                        category: ing.category,
-                        usedDays: JSON.stringify(ing.usedDays || []),
-                        usedIn: ing.usedIn ? JSON.stringify(ing.usedIn) : null,
-                        isChecked: false
-                    }))
+            // 新規作成
+            return await tx.shoppingList.create({
+                data: {
+                    weekStartDate,
+                    recipesData: JSON.stringify(recipesData),
+                    activeDates: JSON.stringify(activeDates),
+                    memo: body.memo,
+                    ingredients: {
+                        create: ingredients.map((ing: Ingredient) => ({
+                            name: ing.name,
+                            amount: ing.amount,
+                            category: ing.category,
+                            usedDays: JSON.stringify(ing.usedDays || []),
+                            usedIn: ing.usedIn ? JSON.stringify(ing.usedIn) : null,
+                            isChecked: false
+                        }))
+                    }
+                },
+                include: {
+                    ingredients: true
                 }
-            },
-            include: {
-                ingredients: true
-            }
+            });
         });
 
         // 保存後に、クライアント側で状態同期しやすいようにIDを含めたアイテム情報を返す

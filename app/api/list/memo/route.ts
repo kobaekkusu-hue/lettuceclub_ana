@@ -10,27 +10,17 @@ export async function PATCH(request: Request) {
             return NextResponse.json({ error: 'weekStartDate is required' }, { status: 400 });
         }
 
-        // 存在確認
-        const existing = await prisma.shoppingList.findUnique({
-            where: { weekStartDate }
+        // upsertを使用して作成または更新をアトミックに行う
+        const list = await prisma.shoppingList.upsert({
+            where: { weekStartDate },
+            update: { memo },
+            create: {
+                weekStartDate,
+                memo,
+                recipesData: '[]',
+                activeDates: '[]',
+            }
         });
-
-        let list;
-        if (existing) {
-            list = await prisma.shoppingList.update({
-                where: { weekStartDate },
-                data: { memo }
-            });
-        } else {
-            list = await prisma.shoppingList.create({
-                data: {
-                    weekStartDate,
-                    memo,
-                    recipesData: '[]',
-                    activeDates: '[]',
-                }
-            });
-        }
 
         return NextResponse.json({ success: true, memo: list.memo });
     } catch (error: any) {
