@@ -442,7 +442,7 @@ export default function Home() {
                               {dish.imageUrl && (
                                 <div className="shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm transition-transform group-hover/dish:scale-110">
                                   <img
-                                    src={dish.imageUrl}
+                                    src={dish.imageUrl.startsWith('/') ? `https://www.lettuceclub.net${dish.imageUrl}` : dish.imageUrl}
                                     alt={dish.title}
                                     className="w-full h-full object-cover"
                                     onError={(e) => (e.currentTarget.style.display = 'none')}

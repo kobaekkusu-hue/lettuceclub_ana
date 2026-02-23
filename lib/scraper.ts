@@ -46,6 +46,12 @@ export async function scrapeRecipe(url: string): Promise<ScrapedData | null> {
                 const lazyImg = container.find('img').filter((j, imgEl) => !!$(imgEl).attr('data-src')).first().attr('data-src');
                 if (lazyImg) img = lazyImg;
 
+                // 画像URLをフルパス化
+                let imageUrl = img || '';
+                if (imageUrl && imageUrl.startsWith('/')) {
+                    imageUrl = `https://www.lettuceclub.net${imageUrl}`;
+                }
+
                 // リンクを探す (/recipe/dish/ を含むもの)
                 const link = container.find('a[href*="/recipe/dish/"]').first().attr('href');
 
@@ -56,7 +62,7 @@ export async function scrapeRecipe(url: string): Promise<ScrapedData | null> {
                         type: dishes.length === 0 ? 'main' : 'side', // 最初の1つを主菜、以降を副菜とする
                         title: dishTitle,
                         url: link ? `https://www.lettuceclub.net${link}` : '',
-                        imageUrl: img || '' // 画像が取れなくてもエラーにしない
+                        imageUrl: imageUrl
                     });
                 }
             }
@@ -67,13 +73,18 @@ export async function scrapeRecipe(url: string): Promise<ScrapedData | null> {
             $('.item_main, .item_sub').each((i, el) => {
                 const dishTitle = $(el).find('.w_tit').text().trim();
                 const dishUrl = $(el).find('a').attr('href');
-                const img = $(el).find('img').attr('src');
+                let img = $(el).find('img').attr('src');
+
+                if (img && img.startsWith('/')) {
+                    img = `https://www.lettuceclub.net${img}`;
+                }
+
                 if (dishTitle) {
                     dishes.push({
                         type: $(el).hasClass('item_main') ? 'main' : 'side',
                         title: dishTitle,
                         url: dishUrl ? `https://www.lettuceclub.net${dishUrl}` : '',
-                        imageUrl: img
+                        imageUrl: img || ''
                     });
                 }
             });
