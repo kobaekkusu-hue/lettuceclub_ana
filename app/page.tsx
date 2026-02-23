@@ -438,13 +438,27 @@ export default function Home() {
                       {menu.dishes && menu.dishes.length > 0 ? (
                         <div className="space-y-2">
                           {menu.dishes.map((dish, dIdx) => (
-                            <div key={dIdx} className="flex items-start gap-2">
-                              <span className={dish.type === 'main' ? 'tag-main shrink-0 dark:opacity-90' : 'tag-side shrink-0 dark:opacity-90'}>
-                                {dish.type === 'main' ? '主' : '副'}
-                              </span>
-                              <span className={`text-sm leading-tight ${dish.type === 'main' ? 'font-bold text-gray-700 dark:text-gray-100' : 'text-gray-600 dark:text-gray-300'}`}>
-                                {dish.title}
-                              </span>
+                            <div key={dIdx} className="flex items-start gap-2 group/dish">
+                              {dish.imageUrl && (
+                                <div className="shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm transition-transform group-hover/dish:scale-110">
+                                  <img
+                                    src={dish.imageUrl}
+                                    alt={dish.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => (e.currentTarget.style.display = 'none')}
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 mb-0.5">
+                                  <span className={dish.type === 'main' ? 'tag-main shrink-0 dark:opacity-90' : 'tag-side shrink-0 dark:opacity-90'}>
+                                    {dish.type === 'main' ? '主' : '副'}
+                                  </span>
+                                </div>
+                                <span className={`text-sm leading-tight block ${dish.type === 'main' ? 'font-bold text-gray-700 dark:text-gray-100' : 'text-gray-600 dark:text-gray-300'}`}>
+                                  {dish.title}
+                                </span>
+                              </div>
                             </div>
                           ))}
                         </div>
