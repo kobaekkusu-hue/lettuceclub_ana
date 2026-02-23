@@ -49,7 +49,8 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
 
   4. **「合わせ調味料」は集計しないでください。** 代わりに、その中身（構成する調味料）を集計してください。
 
-  5. カテゴリは必ず指定されたリストから選んでください。
+  5. カテゴリは必ず以下のリストから最も適切なものを選んでください（カテゴリ名は正確に一致させてください）。
+     リスト: [${categoriesList}]
 
   6. usedDaysには、その食材が登場する曜日のリストを重複なく含めてください。
 

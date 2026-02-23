@@ -287,7 +287,8 @@ export default function Home() {
   const groupIngredients = (ingredients: Ingredient[]) => {
     if (!ingredients) return {} as Record<string, Ingredient[]>;
     return ingredients.reduce((acc, curr) => {
-      const category = curr.category || 'その他';
+      // カテゴリ名をトリミングして、微細な不一致を解消
+      const category = (curr.category || 'その他').trim();
       if (!acc[category]) acc[category] = [];
       acc[category].push(curr);
       return acc;
