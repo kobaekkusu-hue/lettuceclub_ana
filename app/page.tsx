@@ -489,6 +489,7 @@ export default function Home() {
             </h2>
 
             <div className="space-y-6 pb-20">
+              {/* 定義済みカテゴリの表示 */}
               {SHOPPING_CATEGORIES.map((category) => {
                 const items = groupIngredients(result.ingredients)[category] || [];
                 const hasItems = items.length > 0;
@@ -570,6 +571,69 @@ export default function Home() {
                   </div>
                 );
               })}
+
+              {/* 定義済みカテゴリ以外の「その他」表示 */}
+              {Object.keys(groupIngredients(result.ingredients)).some(cat => !SHOPPING_CATEGORIES.includes(cat as any)) && (
+                <div className="glass-panel p-0 overflow-hidden border-orange-100 dark:border-orange-900/30">
+                  <div className="w-full px-5 py-4 bg-orange-50/30 dark:bg-orange-900/10 border-b border-orange-50 dark:border-orange-900/20">
+                    <h3 className="text-lg font-bold text-orange-600 dark:text-orange-400 flex items-center gap-2">
+                      その他（未分類）
+                      <span className="text-xs font-normal opacity-70">AIが判断に迷った項目</span>
+                    </h3>
+                  </div>
+                  <div className="px-5 pb-5 pt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {Object.entries(groupIngredients(result.ingredients))
+                        .filter(([cat]) => !SHOPPING_CATEGORIES.includes(cat as any))
+                        .flatMap(([cat, items]) => items)
+                        .map((item, idx) => {
+                          const key = item.id || `other-${item.name}-${idx}`;
+                          const isChecked = checkedItems.has(key);
+                          return (
+                            <div
+                              key={key}
+                              className={`flex items-start gap-3 p-2 rounded-lg transition-all cursor-pointer ${isChecked ? 'bg-gray-50 opacity-50' : 'hover:bg-white/50'}`}
+                            >
+                              <div className="flex items-start gap-3 w-full group">
+                                <div className="relative pt-1 flex-shrink-0 z-10">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={(e) => {
+                                      e.stopPropagation();
+                                      toggleItem(item);
+                                    }}
+                                    className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-pink-500 checked:border-pink-500 transition-colors"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0" onClick={() => setSelectedIngredient(item)}>
+                                  <div className="flex justify-between items-baseline mb-1">
+                                    <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-pink-600 transition-colors'}`}>
+                                      {item.name}
+                                    </span>
+                                    <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-pink-500 dark:text-pink-400 font-bold'}`}>
+                                      {item.amount}
+                                    </span>
+                                  </div>
+                                  <div className="text-[10px] text-gray-400 bg-gray-50 dark:bg-gray-800 px-1 inline-block rounded mb-1">
+                                    分類: {item.category}
+                                  </div>
+                                  {item.usedDays && item.usedDays.length > 0 && (
+                                    <div className={`flex flex-wrap gap-1 mt-0.5 ${isChecked ? 'opacity-50' : ''}`}>
+                                      {item.usedDays.map(day => (
+                                        <span key={day} className={`day-badge day-badge-${day} shadow-sm`}>{day}</span>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Raw Data Display */}

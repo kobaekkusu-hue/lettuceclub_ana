@@ -58,47 +58,62 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // トランザクションを使用して、削除と作成をアトミックに実行する
-        const newList = await prisma.$transaction(async (tx) => {
-            // 同一週のデータが既に存在する場合は削除
-            await tx.shoppingList.deleteMany({
-                where: { weekStartDate }
-            });
-
-            // 新規作成
-            return await tx.shoppingList.create({
-                data: {
+        // トランザクションを使用して、リストの基本情報と材料リストをアトミックに更新する
+        const savedIngredients = await prisma.$transaction(async (tx) => {
+            // 1. ShoppingList 自体を upsert (存在すれば更新、なければ作成)
+            const list = await tx.shoppingList.upsert({
+                where: { weekStartDate },
+                update: {
+                    recipesData: JSON.stringify(recipesData),
+                    activeDates: JSON.stringify(activeDates),
+                    memo: body.memo !== undefined ? body.memo : undefined
+                },
+                create: {
                     weekStartDate,
                     recipesData: JSON.stringify(recipesData),
                     activeDates: JSON.stringify(activeDates),
-                    memo: body.memo,
-                    ingredients: {
-                        create: ingredients.map((ing: Ingredient) => ({
-                            name: ing.name,
-                            amount: ing.amount,
-                            category: ing.category,
-                            usedDays: JSON.stringify(ing.usedDays || []),
-                            usedIn: ing.usedIn ? JSON.stringify(ing.usedIn) : null,
-                            isChecked: false
-                        }))
-                    }
-                },
-                include: {
-                    ingredients: true
+                    memo: body.memo || ''
                 }
             });
-        });
 
-        // 保存後に、クライアント側で状態同期しやすいようにIDを含めたアイテム情報を返す
-        const savedIngredients = newList.ingredients.map((ing: any) => ({
-            id: ing.id,
-            name: ing.name,
-            amount: ing.amount,
-            category: ing.category,
-            usedDays: JSON.parse(ing.usedDays),
-            usedIn: ing.usedIn ? JSON.parse(ing.usedIn) : undefined,
-            isChecked: ing.isChecked
-        }));
+            // 2. 既存の材料を削除
+            await tx.ingredientItem.deleteMany({
+                where: { listId: list.id }
+            });
+
+            // 3. 新しい材料を登録
+            // 外部キー制約の関係で一つずつ登録するか、createManyが使えるならそれを使用
+            // ここでは types.ts の Ingredient 形式から DB の IngredientItem 形式へ変換
+            const ingredientsToCreate = ingredients.map((ing: Ingredient) => ({
+                listId: list.id,
+                name: ing.name,
+                amount: ing.amount,
+                category: ing.category,
+                usedDays: JSON.stringify(ing.usedDays || []),
+                usedIn: ing.usedIn ? JSON.stringify(ing.usedIn) : null,
+                isChecked: false
+            }));
+
+            // createMany は PostgreSQL で実行可能
+            await tx.ingredientItem.createMany({
+                data: ingredientsToCreate
+            });
+
+            // 保存後のデータを再度取得して返す (IDを含めるため)
+            const allIngredients = await tx.ingredientItem.findMany({
+                where: { listId: list.id }
+            });
+
+            return allIngredients.map((ing: any) => ({
+                id: ing.id,
+                name: ing.name,
+                amount: ing.amount,
+                category: ing.category,
+                usedDays: JSON.parse(ing.usedDays),
+                usedIn: ing.usedIn ? JSON.parse(ing.usedIn) : undefined,
+                isChecked: ing.isChecked
+            }));
+        });
 
         return NextResponse.json({ success: true, ingredients: savedIngredients });
     } catch (error: any) {

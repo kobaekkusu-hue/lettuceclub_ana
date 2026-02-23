@@ -10,10 +10,7 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
   }
 
   // 試行するモデルの優先順位
-  // 1. gemini-3-flash-preview: ユーザー指定
-  // 2. gemini-2.0-flash: 高速・高性能
-  // 3. gemini-1.5-flash: 安定版フォールバック
-  const MODELS = ['gemini-3-flash-preview', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+  const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
 
   const categoriesList = SHOPPING_CATEGORIES.join('、');
 
@@ -79,9 +76,8 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
           const response = await result.response;
           const text = response.text();
 
-          // JSONパース
-          // CoTがあるため、\`\`\`json ... \`\`\` を探す
-          const jsonMatch = text.match(/```json([\s\S]*?)```/);
+          // JSONパース (大文字小文字を区別せず、余分な空白も考慮)
+          const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
 
           if (jsonMatch && jsonMatch[1]) {
             const jsonString = jsonMatch[1].trim();
@@ -137,9 +133,9 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
     .map(line => line.trim())
     .filter(line => line.length > 0 && !line.startsWith('【')) // ヘッダー行を除外
     .map((line, index) => ({
-      name: line.length > 20 ? line.substring(0, 20) + '...' : line, // 長すぎる場合はカット
+      name: line.length > 20 ? line.substring(0, 20) + '...' : line,
       amount: '',
-      category: 'その他（AI生成失敗）',
+      category: '缶詰・瓶詰め・乾物・その他',
       usedDays: []
     }));
 
