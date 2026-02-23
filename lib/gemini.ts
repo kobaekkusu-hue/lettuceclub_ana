@@ -33,7 +33,11 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
       "name": "食材名（例: 玉ねぎ）",
       "amount": "合算した分量（例: 2個）",
       "category": "カテゴリ名",
-      "usedDays": ["月", "水"] 
+      "usedDays": ["月", "水"],
+      "usedIn": [
+        { "day": "月", "dishTitle": "料理名A" },
+        { "day": "水", "dishTitle": "料理名B" }
+      ]
     }
   ]
   \`\`\`
@@ -53,6 +57,9 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
      リスト: [${categoriesList}]
 
   6. usedDaysには、その食材が登場するセクションの曜日（月、火、水、木、金、土、日）を重複なくリストアップしてください。
+
+  7. **重要: usedInには、その食材がどの曜日のどの料理（【曜日の料理名】の見出しにある料理名）に使われているかを正確に記録してください。**
+     - 1つの食材が複数の料理に使われる場合は、すべてリストアップしてください。
   
   入力テキスト:
   ${rawText}

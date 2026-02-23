@@ -721,50 +721,63 @@ export default function Home() {
               <div className="grid gap-4">
                 {result.recipes
                   .filter(menu => selectedIngredient.usedDays.includes(menu.dayOfWeek))
-                  .map((menu, idx) => (
-                    <div key={idx} className="glass-panel p-4 dark:bg-gray-800/50 border border-pink-50 dark:border-pink-900/20">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className={`day-badge day-badge-${menu.dayOfWeek} text-base px-3 py-1`}>
-                          {menu.dayOfWeek}曜日
-                        </span>
-                        <span className="text-xs text-gray-400 dark:text-gray-500">{menu.date}</span>
-                      </div>
+                  .map((menu, idx) => {
+                    // この食材を使う特定の料理のみを抽出
+                    // usedIn がある場合は dishTitle でフィルタリング、ない場合は全表示（フォールバック）
+                    const targetDishes = menu.dishes.filter(dish => {
+                      if (!selectedIngredient.usedIn) return true; // 既存データ用
+                      return selectedIngredient.usedIn.some(
+                        ui => ui.day === menu.dayOfWeek && ui.dishTitle === dish.title
+                      );
+                    });
 
-                      <div className="space-y-3">
-                        {menu.dishes.map((dish, dIdx) => (
-                          <div key={dIdx} className="flex gap-4 items-start">
-                            {dish.imageUrl && (
-                              <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
-                                <img
-                                  src={dish.imageUrl.startsWith('/') ? `https://www.lettuceclub.net${dish.imageUrl}` : dish.imageUrl}
-                                  alt={dish.title}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )}
-                            <div className="flex-1">
-                              <span className={dish.type === 'main' ? 'tag-main mb-1' : 'tag-side mb-1'}>
-                                {dish.type === 'main' ? '主菜' : '副菜'}
-                              </span>
-                              <h4 className="font-bold text-gray-700 dark:text-gray-200 leading-tight">
-                                {dish.title}
-                              </h4>
-                              {dish.url && (
-                                <a
-                                  href={dish.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-xs text-pink-500 hover:text-pink-600 dark:text-pink-400 mt-1 inline-block border-b border-pink-100 hover:border-pink-500"
-                                >
-                                  レシピを見る →
-                                </a>
+                    if (targetDishes.length === 0) return null;
+
+                    return (
+                      <div key={idx} className="glass-panel p-4 dark:bg-gray-800/50 border border-pink-50 dark:border-pink-900/20">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className={`day-badge day-badge-${menu.dayOfWeek} text-base px-3 py-1`}>
+                            {menu.dayOfWeek}曜日
+                          </span>
+                          <span className="text-xs text-gray-400 dark:text-gray-500">{menu.date}</span>
+                        </div>
+
+                        <div className="space-y-3">
+                          {targetDishes.map((dish, dIdx) => (
+                            <div key={dIdx} className="flex gap-4 items-start">
+                              {dish.imageUrl && (
+                                <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
+                                  <img
+                                    src={dish.imageUrl.startsWith('/') ? `https://www.lettuceclub.net${dish.imageUrl}` : dish.imageUrl}
+                                    alt={dish.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
                               )}
+                              <div className="flex-1">
+                                <span className={dish.type === 'main' ? 'tag-main mb-1' : 'tag-side mb-1'}>
+                                  {dish.type === 'main' ? '主菜' : '副菜'}
+                                </span>
+                                <h4 className="font-bold text-gray-700 dark:text-gray-200 leading-tight">
+                                  {dish.title}
+                                </h4>
+                                {dish.url && (
+                                  <a
+                                    href={dish.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-pink-500 hover:text-pink-600 dark:text-pink-400 mt-1 inline-block border-b border-pink-100 hover:border-pink-500"
+                                  >
+                                    レシピを見る →
+                                  </a>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
               </div>
             </div>
 
