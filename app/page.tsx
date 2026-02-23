@@ -743,37 +743,51 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-3">
-                          {targetDishes.map((dish, dIdx) => (
-                            <div key={dIdx} className="flex gap-4 items-start">
-                              {dish.imageUrl && (
-                                <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
-                                  <img
-                                    src={dish.imageUrl.startsWith('/') ? `https://www.lettuceclub.net${dish.imageUrl}` : dish.imageUrl}
-                                    alt={dish.title}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              )}
-                              <div className="flex-1">
-                                <span className={dish.type === 'main' ? 'tag-main mb-1' : 'tag-side mb-1'}>
-                                  {dish.type === 'main' ? '主菜' : '副菜'}
-                                </span>
-                                <h4 className="font-bold text-gray-700 dark:text-gray-200 leading-tight">
-                                  {dish.title}
-                                </h4>
-                                {dish.url && (
-                                  <a
-                                    href={dish.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-pink-500 hover:text-pink-600 dark:text-pink-400 mt-1 inline-block border-b border-pink-100 hover:border-pink-500"
-                                  >
-                                    レシピを見る →
-                                  </a>
+                          {targetDishes.map((dish, dIdx) => {
+                            // この料理での使用分量を取得
+                            const usage = selectedIngredient.usedIn?.find(
+                              ui => ui.day === menu.dayOfWeek && ui.dishTitle === dish.title
+                            );
+
+                            return (
+                              <div key={dIdx} className="flex gap-4 items-start">
+                                {dish.imageUrl && (
+                                  <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
+                                    <img
+                                      src={dish.imageUrl.startsWith('/') ? `https://www.lettuceclub.net${dish.imageUrl}` : dish.imageUrl}
+                                      alt={dish.title}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
                                 )}
+                                <div className="flex-1">
+                                  <div className="flex justify-between items-start gap-2">
+                                    <span className={dish.type === 'main' ? 'tag-main mb-1' : 'tag-side mb-1'}>
+                                      {dish.type === 'main' ? '主菜' : '副菜'}
+                                    </span>
+                                    {usage && (
+                                      <span className="text-sm font-bold text-pink-500 bg-pink-50 dark:bg-pink-900/20 px-2 py-0.5 rounded">
+                                        使用量: {usage.amount}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <h4 className="font-bold text-gray-700 dark:text-gray-200 leading-tight">
+                                    {dish.title}
+                                  </h4>
+                                  {dish.url && (
+                                    <a
+                                      href={dish.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-xs text-pink-500 hover:text-pink-600 dark:text-pink-400 mt-1 inline-block border-b border-pink-100 hover:border-pink-500"
+                                    >
+                                      レシピを見る →
+                                    </a>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     );

@@ -21,7 +21,7 @@ export interface Ingredient {
     amount: string;
     category: string;
     usedDays: string[];
-    usedIn?: { day: string; dishTitle: string }[]; // どの曜日のどの料理に使われているかの詳細
+    usedIn?: { day: string; dishTitle: string; amount: string }[]; // どの曜日のどの料理に、どれだけ使われているか
     isChecked?: boolean; // 購入済みフラグ
 }
 
