@@ -304,13 +304,13 @@ export default function Home() {
       <div className="absolute top-4 right-4 z-10">
         <button
           onClick={toggleDarkMode}
-          className="p-2 rounded-full glass-panel hover:bg-pink-50 dark:hover:bg-gray-700 transition-colors shadow-sm border border-pink-100 dark:border-gray-600"
+          className="p-2 rounded-full glass-panel hover:bg-green-50 dark:hover:bg-gray-700 transition-colors shadow-sm border border-green-100 dark:border-gray-600"
           title={isDarkMode ? 'ライトモードに切り替え' : 'ダークモードに切り替え'}
         >
           {isDarkMode ? (
             <Sun className="w-5 h-5 text-yellow-500" />
           ) : (
-            <Moon className="w-5 h-5 text-pink-400" />
+            <Moon className="w-5 h-5 text-emerald-400" />
           )}
         </button>
       </div>
@@ -318,7 +318,7 @@ export default function Home() {
       {/* Header */}
       <header className="text-center mb-6 md:mb-8">
         <h1 className="text-2xl md:text-4xl font-bold gradient-text mb-2 flex items-center justify-center gap-2 md:gap-3">
-          <ShoppingBag className="w-6 h-6 md:w-8 md:h-8 text-pink-400" />
+          <ShoppingBag className="w-6 h-6 md:w-8 md:h-8 text-emerald-500" />
           あんな専用買い物リスト
         </h1>
         <p className="text-sm md:text-base text-gray-800 dark:text-gray-200 font-semibold px-4">レタスクラブの献立から、あなたのための買い物リストを提案します</p>
@@ -326,7 +326,7 @@ export default function Home() {
         <div className="flex items-center justify-center gap-4 mt-4 text-sm">
           <button
             onClick={() => setIsFeaturesModalOpen(true)}
-            className="flex items-center gap-1.5 text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 transition-colors font-bold border-b-2 border-rose-200 hover:border-rose-600 pb-0.5"
+            className="flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors font-bold border-b-2 border-emerald-200 hover:border-emerald-700 pb-0.5"
           >
             <Info className="w-4 h-4" />
             アプリの特徴
@@ -346,14 +346,14 @@ export default function Home() {
       <div className="glass-panel p-4 md:p-6 mb-6 md:mb-8 text-center animate-fade-in shadow-xl mx-auto max-w-2xl md:max-w-none">
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 mb-4 md:mb-6">
           <div className="flex items-center gap-2 md:gap-4 bg-white/80 p-1.5 md:p-2 rounded-full shadow-sm backdrop-blur-sm w-full md:w-auto justify-between md:justify-start">
-            <button onClick={() => changeWeek(-1)} className="p-2 hover:bg-pink-100 rounded-full text-pink-500 transition-colors">
+            <button onClick={() => changeWeek(-1)} className="p-2 hover:bg-green-100 rounded-full text-emerald-600 transition-colors">
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 px-2 md:px-4 font-bold text-gray-900 dark:text-white text-sm md:text-base">
-              <Calendar className="w-4 h-4 md:w-5 md:h-5 text-pink-400" />
+              <Calendar className="w-4 h-4 md:w-5 md:h-5 text-emerald-500" />
               <span>{weekLabel}</span>
             </div>
-            <button onClick={() => changeWeek(1)} className="p-2 hover:bg-pink-100 rounded-full text-pink-500 transition-colors">
+            <button onClick={() => changeWeek(1)} className="p-2 hover:bg-green-100 rounded-full text-emerald-600 transition-colors">
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
@@ -371,9 +371,9 @@ export default function Home() {
         {/* Weekly Memo Section */}
         <div className="mt-6 max-w-xl mx-auto">
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-pink-200 to-rose-200 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-200 to-emerald-200 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
             <div className="relative glass-panel p-4 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-sm border-b border-pink-50 dark:border-pink-900/30 pb-2">
+              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm border-b border-green-50 dark:border-green-900/30 pb-2">
                 <span className="text-lg">📝</span>
                 <span>お買い物メモ（週ごとの備忘録）</span>
                 <span className="ml-auto text-[10px] font-normal text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 px-2 py-0.5 rounded-full">自動保存中</span>
@@ -402,13 +402,13 @@ export default function Home() {
           <div className="md:col-span-1 space-y-4">
             <div className="sticky top-4 bg-transparent pb-2 z-10">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
-                <span className="bg-pink-100 text-pink-500 p-1 rounded">📅</span> 今週の献立
+                <span className="bg-green-100 text-green-700 p-1 rounded">📅</span> 今週の献立
               </h2>
               <p className="text-xs text-gray-700 dark:text-gray-300 mb-2 font-medium">不要な曜日のチェックを外して「再集計」を押してください</p>
               <button
                 onClick={updateList}
                 disabled={loading}
-                className="w-full bg-white/50 hover:bg-white border border-pink-200 text-pink-600 font-bold py-2 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-sm"
+                className="w-full bg-white/50 hover:bg-white border border-green-200 text-green-700 font-bold py-2 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 text-sm"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '🔄'} 選択した献立で再集計
               </button>
@@ -423,18 +423,18 @@ export default function Home() {
                       checked={isActive}
                       onChange={() => menu.status === 'success' && toggleDate(menu.date)}
                       disabled={menu.status === 'failed'}
-                      className="w-5 h-5 accent-pink-500 cursor-pointer"
+                      className="w-5 h-5 accent-emerald-600 cursor-pointer"
                     />
                   </div>
                   <a
                     href={menu.status === 'success' ? menu.url : '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`block card group relative overflow-hidden ${menu.status === 'failed' ? 'border-red-200 bg-red-50' : isActive ? 'hover:border-pink-300' : 'border-gray-200'}`}
+                    className={`block card group relative overflow-hidden ${menu.status === 'failed' ? 'border-red-200 bg-red-50' : isActive ? 'hover:border-green-300' : 'border-gray-200'}`}
                   >
                     <div className="flex flex-col h-full">
                       <div className="text-xs font-bold text-gray-400 dark:text-gray-500 mb-2 flex justify-between items-center border-b dark:border-gray-800 pb-1">
-                        <span className="text-lg text-pink-500 dark:text-pink-400">{menu.dayOfWeek ? `${menu.dayOfWeek}` : '-'}</span>
+                        <span className="text-lg text-green-700 dark:text-green-400">{menu.dayOfWeek ? `${menu.dayOfWeek}` : '-'}</span>
                         <span className="text-[10px] bg-gray-100 dark:bg-gray-800 dark:text-gray-400 px-2 py-0.5 rounded-full">{menu.date}</span>
                       </div>
 
@@ -532,7 +532,7 @@ export default function Home() {
                                           e.stopPropagation();
                                           toggleItem(item);
                                         }}
-                                        className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-pink-500 checked:border-pink-500 transition-colors"
+                                        className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-emerald-600 checked:border-emerald-600 transition-colors"
                                       />
                                     </div>
                                     <div
@@ -540,10 +540,10 @@ export default function Home() {
                                       onClick={() => setSelectedIngredient(item)}
                                     >
                                       <div className="flex justify-between items-baseline mb-1">
-                                        <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-pink-600 transition-colors'}`}>
+                                        <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-emerald-700 transition-colors'}`}>
                                           {item.name}
                                         </span>
-                                        <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-pink-500 dark:text-pink-400 font-bold'}`}>
+                                        <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-emerald-600 dark:text-emerald-400 font-bold'}`}>
                                           {item.amount}
                                         </span>
                                       </div>
@@ -604,15 +604,15 @@ export default function Home() {
                                       e.stopPropagation();
                                       toggleItem(item);
                                     }}
-                                    className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-pink-500 checked:border-pink-500 transition-colors"
+                                    className="checkbox-custom appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:outline-none checked:bg-emerald-600 checked:border-emerald-600 transition-colors"
                                   />
                                 </div>
                                 <div className="flex-1 min-w-0" onClick={() => setSelectedIngredient(item)}>
                                   <div className="flex justify-between items-baseline mb-1">
-                                    <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-pink-600 transition-colors'}`}>
+                                    <span className={`font-medium text-base truncate pr-2 ${isChecked ? 'line-through text-gray-400 decoration-gray-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-emerald-700 transition-colors'}`}>
                                       {item.name}
                                     </span>
-                                    <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-pink-500 dark:text-pink-400 font-bold'}`}>
+                                    <span className={`text-sm whitespace-nowrap ${isChecked ? 'text-gray-300' : 'text-emerald-600 dark:text-emerald-400 font-bold'}`}>
                                       {item.amount}
                                     </span>
                                   </div>
@@ -663,7 +663,7 @@ export default function Home() {
       >
         <div className="space-y-6">
           <p>
-            買い物リストの集計を正しく、かつ実用的に行うために、このアプリでは<strong className="text-pink-500">「LLM（Gemini API）によるセマンティック（意味論的）な集計」</strong>という設計を採用しています。
+            買い物リストの集計を正しく、かつ実用的に行うために、このアプリでは<strong className="text-emerald-600">「LLM（Gemini API）によるセマンティック（意味論的）な集計」</strong>という設計を採用しています。
           </p>
           <p>
             単純な文字列一致による集計では、「鶏肉」と「鶏もも肉」を別物として扱ってしまったり、「大さじ1」と「小さじ3」を合算できなかったりしますが、以下の設計ポイントによってそれらを解決しています。
@@ -771,10 +771,10 @@ export default function Home() {
         {selectedIngredient && result && (
           <div className="space-y-6">
             <div className="flex justify-between items-center border-b dark:border-gray-800 pb-4">
-              <h3 className="text-xl font-bold text-pink-600 dark:text-pink-400">
+              <h3 className="text-xl font-bold text-emerald-700 dark:text-emerald-400">
                 {selectedIngredient.name}
               </h3>
-              <span className="bg-pink-50 dark:bg-pink-900/30 text-pink-500 dark:text-pink-300 px-3 py-1 rounded-full font-bold">
+              <span className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-3 py-1 rounded-full font-bold">
                 {selectedIngredient.amount}
               </span>
             </div>
@@ -800,7 +800,7 @@ export default function Home() {
                     if (targetDishes.length === 0) return null;
 
                     return (
-                      <div key={idx} className="glass-panel p-4 dark:bg-gray-800/50 border border-pink-50 dark:border-pink-900/20">
+                      <div key={idx} className="glass-panel p-4 dark:bg-gray-800/50 border border-green-50 dark:border-green-900/20">
                         <div className="flex items-center gap-3 mb-3">
                           <span className={`day-badge day-badge-${menu.dayOfWeek} text-base px-3 py-1`}>
                             {menu.dayOfWeek}曜日
