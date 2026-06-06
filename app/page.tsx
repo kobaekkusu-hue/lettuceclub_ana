@@ -404,7 +404,7 @@ export default function Home() {
               <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
                 <span className="bg-green-100 text-green-700 p-1 rounded">📅</span> 今週の献立
               </h2>
-              <p className="text-xs text-gray-700 dark:text-gray-300 mb-2 font-medium">不要な曜日のチェックを外して「再集計」を押してください</p>
+              <p className="text-xs text-gray-700 dark:text-gray-300 mb-2 font-medium">不要な曜日がある場合は、不要な曜日のチェックを外して「再集計」を押してください</p>
               <button
                 onClick={updateList}
                 disabled={loading}
