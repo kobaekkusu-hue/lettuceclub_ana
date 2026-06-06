@@ -3,6 +3,18 @@ import { Ingredient, SHOPPING_CATEGORIES } from '@/app/types';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
+function isRateLimitError(error: any): boolean {
+  const msg = error?.message || '';
+  const status = error?.status;
+  return (
+    status === 429 ||
+    msg.includes('429') ||
+    msg.includes('RESOURCE_EXHAUSTED') ||
+    msg.includes('Quota exceeded') ||
+    msg.includes('rate limit')
+  );
+}
+
 export async function aggregateIngredients(rawText: string): Promise<Ingredient[]> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -86,6 +98,9 @@ export async function aggregateIngredients(rawText: string): Promise<Ingredient[
       }
     } catch (error: any) {
       console.warn(`Model ${modelName} failed:`, error.message);
+      if (isRateLimitError(error)) {
+        throw new Error('GEMINI_RATE_LIMIT_EXHAUSTED');
+      }
       continue;
     }
   }

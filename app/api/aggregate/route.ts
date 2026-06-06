@@ -105,6 +105,12 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.error('Error in aggregate API:', error);
+        if (error instanceof Error && error.message === 'GEMINI_RATE_LIMIT_EXHAUSTED') {
+            return NextResponse.json(
+                { error: 'Gemini APIの利用上限（1分あたりのリクエスト数や無料枠の上限など）に達しています。しばらく時間を置いてから再度お試しください。' },
+                { status: 429 }
+            );
+        }
         return NextResponse.json({ error: 'Failed to generate shopping list' }, { status: 500 });
     }
 }
