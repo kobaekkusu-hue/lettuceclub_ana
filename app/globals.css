@@ -3,30 +3,43 @@
 @tailwind utilities;
 
 :root {
-  --primary: #FF7E9D;
-  /* より鮮やかなピンク */
-  --primary-hover: #FF5C85;
-  --secondary: #6B7280;
-  --text-main: #333333;
-  --text-muted: #666666;
+  --primary: #E11D48;
+  /* 視認性の高い濃いローズピンク（rose-600） */
+  --primary-hover: #BE123C;
+  /* rose-700 */
+  --secondary: #4B5563;
+  /* gray-600 */
+  --text-main: #111827;
+  /* はっきりとした黒（gray-900） */
+  --text-muted: #374151;
+  /* 濃いめのグレー（gray-700） */
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --glass-bg: rgba(255, 255, 255, 0.92);
-  --glass-border: #ffe4e6;
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --body-overlay: rgba(255, 255, 255, 0.65);
+  --glass-bg: rgba(255, 255, 255, 0.96);
+  /* 背景を透過させず白さを確保 */
+  --glass-border: #fda4af;
+  /* 枠線を少し濃く（rose-300） */
+  --card-bg: rgba(255, 255, 255, 0.98);
+  /* カード内はほぼ完全な白 */
+  --body-overlay: rgba(243, 244, 246, 0.88);
+  /* オーバーレイの透明度を下げて背景をうっすら見せる程度に */
 }
 
 body.dark {
-  --text-main: #ffffff;
-  --text-muted: #d1d5db;
-  /* gray-300 */
-  --glass-bg: rgba(31, 41, 55, 0.85);
-  /* deep slate */
-  --glass-border: rgba(244, 114, 182, 0.2);
-  /* faint pink */
-  --card-bg: rgba(17, 24, 39, 0.9);
-  --body-overlay: rgba(15, 23, 42, 0.8);
-  /* darker navy overlay */
+  --primary: #FB7185;
+  /* 明るめのローズピンク（rose-400） */
+  --primary-hover: #FDA4AF;
+  /* rose-300 */
+  --text-main: #F9FAFB;
+  /* ほぼ白（gray-50） */
+  --text-muted: #E5E7EB;
+  /* 明るいグレー（gray-200） */
+  --glass-bg: rgba(17, 24, 39, 0.96);
+  /* 深いダーク（gray-900） */
+  --glass-border: rgba(244, 114, 182, 0.3);
+  --card-bg: rgba(31, 41, 55, 0.98);
+  /* カード背景（gray-800） */
+  --body-overlay: rgba(17, 24, 39, 0.9);
+  /* ダークモード用の濃いマスク */
 }
 
 * {
@@ -213,7 +226,7 @@ button {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #FF9AA2 0%, #FFB7B2 100%);
+  background: linear-gradient(135deg, #E11D48 0%, #FF5C85 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -261,34 +274,34 @@ button {
 }
 
 .day-badge-月 {
-  background-color: #ff9a9e;
+  background-color: #EF4444;
 }
 
 .day-badge-火 {
-  background-color: #fad0c4;
-  color: #555;
+  background-color: #F97316;
+  color: white;
 }
 
 .day-badge-水 {
-  background-color: #a18cd1;
+  background-color: #06B6D4;
 }
 
 .day-badge-木 {
-  background-color: #fbc2eb;
+  background-color: #8B5CF6;
 }
 
 .day-badge-金 {
-  background-color: #8fd3f4;
+  background-color: #10B981;
 }
 
 .day-badge-土 {
-  background-color: #84fab0;
-  color: #555;
+  background-color: #3B82F6;
+  color: white;
 }
 
 .day-badge-日 {
-  background-color: #ffecd2;
-  color: #555;
+  background-color: #EC4899;
+  color: white;
 }
 
 /* アニメーション */

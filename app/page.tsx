@@ -321,19 +321,19 @@ export default function Home() {
           <ShoppingBag className="w-6 h-6 md:w-8 md:h-8 text-pink-400" />
           あんな専用買い物リスト
         </h1>
-        <p className="text-sm md:text-base text-gray-500 dark:text-pink-100 font-medium px-4">レタスクラブの献立から、あなたのための買い物リストを提案します</p>
+        <p className="text-sm md:text-base text-gray-800 dark:text-gray-200 font-semibold px-4">レタスクラブの献立から、あなたのための買い物リストを提案します</p>
 
         <div className="flex items-center justify-center gap-4 mt-4 text-sm">
           <button
             onClick={() => setIsFeaturesModalOpen(true)}
-            className="flex items-center gap-1.5 text-pink-500 hover:text-pink-600 dark:text-pink-300 dark:hover:text-pink-200 transition-colors font-medium border-b border-pink-200 hover:border-pink-500 pb-0.5"
+            className="flex items-center gap-1.5 text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 transition-colors font-bold border-b-2 border-rose-200 hover:border-rose-600 pb-0.5"
           >
             <Info className="w-4 h-4" />
             アプリの特徴
           </button>
           <button
             onClick={() => setIsAccuracyModalOpen(true)}
-            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-200 transition-colors font-medium border-b border-gray-200 hover:border-gray-500 pb-0.5"
+            className="flex items-center gap-1.5 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100 transition-colors font-bold border-b-2 border-gray-300 hover:border-gray-700 pb-0.5"
           >
             <HelpCircle className="w-4 h-4" />
             集計の正確性について
@@ -349,7 +349,7 @@ export default function Home() {
             <button onClick={() => changeWeek(-1)} className="p-2 hover:bg-pink-100 rounded-full text-pink-500 transition-colors">
               <ChevronLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2 px-2 md:px-4 font-bold text-gray-700 text-sm md:text-base">
+            <div className="flex items-center gap-2 px-2 md:px-4 font-bold text-gray-900 dark:text-white text-sm md:text-base">
               <Calendar className="w-4 h-4 md:w-5 md:h-5 text-pink-400" />
               <span>{weekLabel}</span>
             </div>
@@ -373,7 +373,7 @@ export default function Home() {
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-pink-200 to-rose-200 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
             <div className="relative glass-panel p-4 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-pink-500 dark:text-pink-400 font-bold text-sm border-b border-pink-50 dark:border-pink-900/30 pb-2">
+              <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-sm border-b border-pink-50 dark:border-pink-900/30 pb-2">
                 <span className="text-lg">📝</span>
                 <span>お買い物メモ（週ごとの備忘録）</span>
                 <span className="ml-auto text-[10px] font-normal text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 px-2 py-0.5 rounded-full">自動保存中</span>
@@ -401,10 +401,10 @@ export default function Home() {
           {/* Left Column: Recipes */}
           <div className="md:col-span-1 space-y-4">
             <div className="sticky top-4 bg-transparent pb-2 z-10">
-              <h2 className="text-xl font-bold text-gray-700 dark:text-gray-100 flex items-center gap-2 mb-2">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-2">
                 <span className="bg-pink-100 text-pink-500 p-1 rounded">📅</span> 今週の献立
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">不要な曜日のチェックを外して「再集計」を押してください</p>
+              <p className="text-xs text-gray-700 dark:text-gray-300 mb-2 font-medium">不要な曜日のチェックを外して「再集計」を押してください</p>
               <button
                 onClick={updateList}
                 disabled={loading}
@@ -485,7 +485,7 @@ export default function Home() {
 
           {/* Right Column: Shopping List */}
           <div className="md:col-span-2">
-            <h2 className="text-xl font-bold text-gray-700 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <span className="bg-green-100 text-green-500 p-1 rounded">🛒</span> お買い物リスト
             </h2>
 
