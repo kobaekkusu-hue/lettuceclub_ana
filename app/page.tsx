@@ -319,7 +319,7 @@ export default function Home() {
       <header className="text-center mb-6 md:mb-8">
         <h1 className="text-2xl md:text-4xl font-bold gradient-text mb-2 flex items-center justify-center gap-2 md:gap-3">
           <ShoppingBag className="w-6 h-6 md:w-8 md:h-8 text-pink-400" />
-          AI Shopping List
+          あんな専用買い物リスト
         </h1>
         <p className="text-sm md:text-base text-gray-500 dark:text-pink-100 font-medium px-4">レタスクラブの献立から、あなたのための買い物リストを提案します</p>
 
