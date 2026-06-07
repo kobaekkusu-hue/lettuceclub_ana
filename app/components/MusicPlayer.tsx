@@ -131,13 +131,13 @@ export default function MusicPlayer() {
       {isOpen && (
         <div className="mb-3 w-72 glass-panel p-4 bg-emerald-900/95 dark:bg-gray-900/95 text-white border border-emerald-500/20 shadow-2xl animate-fade-in rounded-2xl">
           <div className="flex justify-between items-center mb-3 pb-2 border-b border-emerald-800/50">
-            <h4 className="text-sm font-bold flex items-center gap-2 text-emerald-100">
-              <Music className="w-4 h-4 text-emerald-400" />
+            <h4 className="text-sm font-extrabold flex items-center gap-2 text-white">
+              <Music className="w-4 h-4 text-emerald-300" />
               森のヒーリングBGM
             </h4>
             <button 
               onClick={() => setIsOpen(false)}
-              className="text-xs text-emerald-300 hover:text-white transition-colors"
+              className="text-xs text-emerald-200 hover:text-white font-bold transition-colors underline decoration-emerald-400/50"
             >
               閉じる
             </button>
