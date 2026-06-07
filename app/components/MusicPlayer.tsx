@@ -129,15 +129,15 @@ export default function MusicPlayer() {
     <div className="fixed bottom-6 left-6 z-50 font-sans">
       {/* フローティングBGMコントロールパネル */}
       {isOpen && (
-        <div className="mb-3 w-72 glass-panel p-4 bg-emerald-900/95 dark:bg-gray-900/95 text-white border border-emerald-500/20 shadow-2xl animate-fade-in rounded-2xl">
-          <div className="flex justify-between items-center mb-3 pb-2 border-b border-emerald-800/50">
-            <h4 className="text-sm font-extrabold flex items-center gap-2 text-white">
-              <Music className="w-4 h-4 text-emerald-300" />
+        <div className="mb-3 w-72 glass-panel p-4 border border-emerald-500/20 dark:border-emerald-500/10 shadow-2xl animate-fade-in rounded-2xl text-gray-800 dark:text-white">
+          <div className="flex justify-between items-center mb-3 pb-2 border-b border-emerald-100 dark:border-emerald-800/50">
+            <h4 className="text-sm font-extrabold flex items-center gap-2 text-emerald-800 dark:text-white">
+              <Music className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               森のヒーリングBGM
             </h4>
             <button 
               onClick={() => setIsOpen(false)}
-              className="text-xs text-emerald-200 hover:text-white font-bold transition-colors underline decoration-emerald-400/50"
+              className="text-xs text-emerald-600 hover:text-emerald-800 dark:text-emerald-300 dark:hover:text-white font-bold transition-colors underline decoration-emerald-500/50"
             >
               閉じる
             </button>
@@ -146,15 +146,15 @@ export default function MusicPlayer() {
           {/* トラック選択リスト / ロード中表示 */}
           <div className="mb-3.5">
             {isLoading ? (
-              <div className="flex items-center justify-center py-6 text-emerald-300 gap-2">
+              <div className="flex items-center justify-center py-6 text-emerald-600 dark:text-emerald-300 gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span className="text-xs">音源スキャン中...</span>
               </div>
             ) : tracks.length === 0 ? (
-              <div className="text-xs text-emerald-300 py-4 text-center leading-relaxed bg-emerald-950/40 rounded-xl border border-emerald-800/30 px-3">
+              <div className="text-xs text-emerald-800 dark:text-emerald-300 py-4 text-center leading-relaxed bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/30 px-3">
                 再生可能な音源がありません。
                 <br />
-                <code className="text-white bg-emerald-950 px-1 py-0.5 rounded text-[10px]">public/audio/</code> フォルダに
+                <code className="text-emerald-900 bg-emerald-100 dark:text-white dark:bg-emerald-950 px-1 py-0.5 rounded text-[10px]">public/audio/</code> フォルダに
                 <br />
                 .mp3 ファイルを配置してください。
               </div>
@@ -166,16 +166,16 @@ export default function MusicPlayer() {
                     onClick={() => handleTrackChange(idx)}
                     className={`w-full text-left px-3 py-2 rounded-xl text-xs flex justify-between items-center transition-all ${
                       currentTrackIndex === idx
-                        ? 'bg-emerald-700/80 font-bold text-white shadow-inner border border-emerald-500/30'
-                        : 'hover:bg-emerald-800/40 text-emerald-200 hover:text-white'
+                        ? 'bg-emerald-700/90 font-bold text-white shadow-inner border border-emerald-600/30'
+                        : 'hover:bg-emerald-50 dark:hover:bg-emerald-800/40 text-gray-700 dark:text-emerald-200 hover:text-emerald-800 dark:hover:text-white'
                     }`}
                   >
                     <span className="truncate pr-2">{track.name}</span>
                     {currentTrackIndex === idx && isPlaying && (
                       <span className="flex gap-0.5 items-end h-3 shrink-0">
-                        <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.8s_infinite_ease-in-out]"></span>
-                        <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.5s_infinite_ease-in-out_0.2s]"></span>
-                        <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.7s_infinite_ease-in-out_0.1s]"></span>
+                        <span className="w-0.5 bg-white dark:bg-emerald-300 animate-[eq-bar_0.8s_infinite_ease-in-out]"></span>
+                        <span className="w-0.5 bg-white dark:bg-emerald-300 animate-[eq-bar_0.5s_infinite_ease-in-out_0.2s]"></span>
+                        <span className="w-0.5 bg-white dark:bg-emerald-300 animate-[eq-bar_0.7s_infinite_ease-in-out_0.1s]"></span>
                       </span>
                     )}
                   </button>
@@ -190,10 +190,10 @@ export default function MusicPlayer() {
             <button
               onClick={togglePlay}
               disabled={isControlDisabled}
-              className="p-2.5 bg-white text-emerald-900 hover:bg-emerald-100 rounded-full shadow-lg transition-transform active:scale-95 flex-shrink-0 disabled:opacity-50"
+              className="p-2.5 bg-emerald-700 text-white hover:bg-emerald-800 rounded-full shadow-lg transition-transform active:scale-95 flex-shrink-0 disabled:opacity-50"
               title={isPlaying ? '一時停止' : '再生'}
             >
-              {isPlaying ? <Pause className="w-4 h-4 fill-emerald-900" /> : <Play className="w-4 h-4 fill-emerald-900 ml-0.5" />}
+              {isPlaying ? <Pause className="w-4 h-4 fill-white text-white" /> : <Play className="w-4 h-4 fill-white text-white ml-0.5" />}
             </button>
 
             {/* 音量調整 */}
@@ -201,7 +201,7 @@ export default function MusicPlayer() {
               <button 
                 onClick={toggleMute}
                 disabled={isControlDisabled}
-                className="text-emerald-300 hover:text-white transition-colors"
+                className="text-emerald-600 dark:text-emerald-300 hover:text-emerald-800 dark:hover:text-white transition-colors"
               >
                 {isMuted || volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </button>
@@ -216,19 +216,19 @@ export default function MusicPlayer() {
                   setVolume(parseFloat(e.target.value));
                   if (isMuted) setIsMuted(false);
                 }}
-                className="w-full accent-emerald-400 h-1 bg-emerald-950 rounded-lg cursor-pointer"
+                className="w-full accent-emerald-600 dark:accent-emerald-400 h-1 bg-emerald-100 dark:bg-emerald-950 rounded-lg cursor-pointer"
               />
             </div>
           </div>
 
           {/* 音声ファイルエラー表示 */}
           {hasError && !isControlDisabled && (
-            <div className="mt-3 p-2 bg-emerald-950/70 border border-emerald-500/20 rounded-xl flex items-start gap-1.5 text-[10px] text-emerald-300 leading-tight">
-              <AlertCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="mt-3 p-2 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-500/20 rounded-xl flex items-start gap-1.5 text-[10px] text-emerald-800 dark:text-emerald-300 leading-tight">
+              <AlertCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
                 音声ファイルの再生に失敗しました。
                 <br />
-                ファイル <code className="text-white">{currentTrack.name}.mp3</code> が正しく配置されているかご確認ください。
+                ファイル <code className="text-emerald-900 bg-emerald-100 dark:text-white dark:bg-emerald-950 px-1 py-0.5 rounded text-[10px]">{currentTrack.name}.mp3</code> が正しく配置されているかご確認ください。
               </span>
             </div>
           )}
