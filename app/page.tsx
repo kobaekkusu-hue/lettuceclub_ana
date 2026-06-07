@@ -5,6 +5,7 @@ import { ShoppingList, Ingredient, SHOPPING_CATEGORIES } from './types';
 import { format, addDays, startOfWeek, addWeeks } from 'date-fns';
 import { ShoppingBag, Calendar, AlertCircle, ChevronLeft, ChevronRight, Loader2, Info, HelpCircle, Sun, Moon, ChevronDown, ChevronUp } from 'lucide-react';
 import InfoModal from './components/InfoModal';
+import MusicPlayer from './components/MusicPlayer';
 
 
 export default function Home() {
@@ -832,7 +833,7 @@ export default function Home() {
                                       {dish.type === 'main' ? '主菜' : '副菜'}
                                     </span>
                                     {usage && (
-                                      <span className="text-sm font-bold text-pink-500 bg-pink-50 dark:bg-pink-900/20 px-2 py-0.5 rounded">
+                                      <span className="text-sm font-bold text-green-700 bg-green-50 dark:bg-green-900/20 px-2 py-0.5 rounded">
                                         使用量: {usage.amount}
                                       </span>
                                     )}
@@ -845,7 +846,7 @@ export default function Home() {
                                       href={dish.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-xs text-pink-500 hover:text-pink-600 dark:text-pink-400 mt-1 inline-block border-b border-pink-100 hover:border-pink-500"
+                                      className="text-xs text-green-600 hover:text-green-700 dark:text-green-400 mt-1 inline-block border-b border-green-100 hover:border-green-500"
                                     >
                                       レシピを見る →
                                     </a>
@@ -870,6 +871,7 @@ export default function Home() {
           </div>
         )}
       </InfoModal>
+      <MusicPlayer />
     </main>
   );
 }
