@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Music, Volume2, VolumeX, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
+import { Play, Pause, Music, Volume2, VolumeX, AlertCircle, Loader2 } from 'lucide-react';
 
 interface Track {
   id: string;
@@ -10,13 +10,9 @@ interface Track {
   type: 'ambient' | 'music';
 }
 
-const TRACKS: Track[] = [
-  { id: 'birds', name: '小鳥のさえずり（環境音）', url: '/audio/birds.mp3', type: 'ambient' },
-  { id: 'rain', name: '森の雨音（環境音）', url: '/audio/rain.mp3', type: 'ambient' },
-  { id: 'lofi', name: '木漏れ日Lo-Fi（BGM）', url: '/audio/lofi.mp3', type: 'music' },
-];
-
 export default function MusicPlayer() {
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
@@ -25,10 +21,30 @@ export default function MusicPlayer() {
   const [hasError, setHasError] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const currentTrack = TRACKS[currentTrackIndex];
+  const currentTrack = tracks[currentTrackIndex];
+
+  // 音声ファイル一覧の取得
+  useEffect(() => {
+    async function fetchTracks() {
+      try {
+        const response = await fetch('/api/audio');
+        if (response.ok) {
+          const data = await response.json();
+          setTracks(data);
+        }
+      } catch (err) {
+        console.error('Failed to load tracks:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchTracks();
+  }, []);
 
   // 音声の初期化と切り替え
   useEffect(() => {
+    if (!currentTrack) return;
+
     // 既存の音声を停止
     if (audioRef.current) {
       audioRef.current.pause();
@@ -49,7 +65,7 @@ export default function MusicPlayer() {
         audioRef.current.pause();
       }
     };
-  }, [currentTrackIndex]);
+  }, [currentTrackIndex, tracks]);
 
   // ボリューム・ミュート設定の同期
   useEffect(() => {
@@ -65,7 +81,7 @@ export default function MusicPlayer() {
       await audioRef.current.play();
       setIsPlaying(true);
     } catch (err) {
-      console.warn('Audio play failed. File may not be placed yet.', err);
+      console.warn('Audio play failed:', err);
       setHasError(true);
       setIsPlaying(false);
     }
@@ -106,6 +122,9 @@ export default function MusicPlayer() {
     setIsMuted(!isMuted);
   };
 
+  // トラックがない、またはロード中の場合はコントロールを無効化
+  const isControlDisabled = isLoading || tracks.length === 0;
+
   return (
     <div className="fixed bottom-6 left-6 z-50 font-sans">
       {/* フローティングBGMコントロールパネル */}
@@ -124,36 +143,54 @@ export default function MusicPlayer() {
             </button>
           </div>
 
-          {/* トラック選択リスト */}
-          <div className="space-y-1.5 mb-3.5">
-            {TRACKS.map((track, idx) => (
-              <button
-                key={track.id}
-                onClick={() => handleTrackChange(idx)}
-                className={`w-full text-left px-3 py-2 rounded-xl text-xs flex justify-between items-center transition-all ${
-                  currentTrackIndex === idx
-                    ? 'bg-emerald-700/80 font-bold text-white shadow-inner border border-emerald-500/30'
-                    : 'hover:bg-emerald-800/40 text-emerald-200 hover:text-white'
-                }`}
-              >
-                <span>{track.name}</span>
-                {currentTrackIndex === idx && isPlaying && (
-                  <span className="flex gap-0.5 items-end h-3">
-                    <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.8s_infinite_ease-in-out]"></span>
-                    <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.5s_infinite_ease-in-out_0.2s]"></span>
-                    <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.7s_infinite_ease-in-out_0.1s]"></span>
-                  </span>
-                )}
-              </button>
-            ))}
+          {/* トラック選択リスト / ロード中表示 */}
+          <div className="mb-3.5">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-6 text-emerald-300 gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-xs">音源スキャン中...</span>
+              </div>
+            ) : tracks.length === 0 ? (
+              <div className="text-xs text-emerald-300 py-4 text-center leading-relaxed bg-emerald-950/40 rounded-xl border border-emerald-800/30 px-3">
+                再生可能な音源がありません。
+                <br />
+                <code className="text-white bg-emerald-950 px-1 py-0.5 rounded text-[10px]">public/audio/</code> フォルダに
+                <br />
+                .mp3 ファイルを配置してください。
+              </div>
+            ) : (
+              <div className="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar pr-1">
+                {tracks.map((track, idx) => (
+                  <button
+                    key={track.id}
+                    onClick={() => handleTrackChange(idx)}
+                    className={`w-full text-left px-3 py-2 rounded-xl text-xs flex justify-between items-center transition-all ${
+                      currentTrackIndex === idx
+                        ? 'bg-emerald-700/80 font-bold text-white shadow-inner border border-emerald-500/30'
+                        : 'hover:bg-emerald-800/40 text-emerald-200 hover:text-white'
+                    }`}
+                  >
+                    <span className="truncate pr-2">{track.name}</span>
+                    {currentTrackIndex === idx && isPlaying && (
+                      <span className="flex gap-0.5 items-end h-3 shrink-0">
+                        <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.8s_infinite_ease-in-out]"></span>
+                        <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.5s_infinite_ease-in-out_0.2s]"></span>
+                        <span className="w-0.5 bg-emerald-300 animate-[eq-bar_0.7s_infinite_ease-in-out_0.1s]"></span>
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* コントロールエリア */}
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center gap-3 ${isControlDisabled ? 'opacity-40 pointer-events-none' : ''}`}>
             {/* 再生/一時停止 */}
             <button
               onClick={togglePlay}
-              className="p-2.5 bg-white text-emerald-900 hover:bg-emerald-100 rounded-full shadow-lg transition-transform active:scale-95 flex-shrink-0"
+              disabled={isControlDisabled}
+              className="p-2.5 bg-white text-emerald-900 hover:bg-emerald-100 rounded-full shadow-lg transition-transform active:scale-95 flex-shrink-0 disabled:opacity-50"
               title={isPlaying ? '一時停止' : '再生'}
             >
               {isPlaying ? <Pause className="w-4 h-4 fill-emerald-900" /> : <Play className="w-4 h-4 fill-emerald-900 ml-0.5" />}
@@ -163,6 +200,7 @@ export default function MusicPlayer() {
             <div className="flex items-center gap-2 flex-1">
               <button 
                 onClick={toggleMute}
+                disabled={isControlDisabled}
                 className="text-emerald-300 hover:text-white transition-colors"
               >
                 {isMuted || volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
@@ -173,6 +211,7 @@ export default function MusicPlayer() {
                 max="1"
                 step="0.05"
                 value={isMuted ? 0 : volume}
+                disabled={isControlDisabled}
                 onChange={(e) => {
                   setVolume(parseFloat(e.target.value));
                   if (isMuted) setIsMuted(false);
@@ -182,21 +221,21 @@ export default function MusicPlayer() {
             </div>
           </div>
 
-          {/* 音声ファイル未配置時のエラー表示 */}
-          {hasError && (
+          {/* 音声ファイルエラー表示 */}
+          {hasError && !isControlDisabled && (
             <div className="mt-3 p-2 bg-emerald-950/70 border border-emerald-500/20 rounded-xl flex items-start gap-1.5 text-[10px] text-emerald-300 leading-tight">
               <AlertCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
               <span>
-                音声ファイルが見つかりません。
+                音声ファイルの再生に失敗しました。
                 <br />
-                <code className="text-white">public/audio/{currentTrack.id}.mp3</code> を配置してください。
+                ファイル <code className="text-white">{currentTrack.name}.mp3</code> が正しく配置されているかご確認ください。
               </span>
             </div>
           )}
         </div>
       )}
 
-      {/* フローティング起動ボタン */}
+      {/* フローティング BGM アイコンボタン */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`p-3.5 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center border ${
